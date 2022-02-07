@@ -6,10 +6,9 @@ import org.camunda.bpm.client.backoff.BackoffStrategy;
 import org.camunda.bpm.client.backoff.ExponentialBackoffStrategy;
 import org.camunda.scale.workexecution.WorkExecution;
 import org.camunda.scale.workexecution.WorkTracker;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 
@@ -48,7 +47,7 @@ public class ExternalJava {
                     .open();
             listClients.add(client);
         }
-        WorkTracker tracker=WorkTracker.getInstance();
+        WorkTracker tracker = WorkTracker.getInstance();
         tracker.monitorTracker();
         logger.info("ExternalJava: the end");
     }

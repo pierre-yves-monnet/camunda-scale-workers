@@ -16,21 +16,26 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.logging.Logger;
 
 //
 
 @Configuration
-@EnableScheduling
-
-
 
 public class BeanThread {
 
     private static final Logger logger = Logger.getLogger(BeanThread.class.getName());
 
+    /**
+     * This object is used only to track the activity - not use it
+     */
     private final Set<String> inProgressActivivy = new HashSet<>();
-    ExecutorService executor = Executors.newFixedThreadPool(20);
+
+    /**
+     * How many thread do I want to execute at a time?
+     */
+    ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(20);
 
 
     @Bean
@@ -43,7 +48,8 @@ public class BeanThread {
                 inProgressActivivy.add(externalTask.getId());
             }
 
-                logger.info("BeanThread.execute : >>>>>>>>>>> start ["+externalTask.getId()+"] in parallel "+inProgressActivivy.size());
+            logger.info("BeanThread.execute : >>>>>>>>>>> start ["+externalTask.getId()
+                    +"] in parallel "+inProgressActivivy.size() + "In pool "+executor.getQueue().size());
 
             executor.submit(() -> {
                         WorkExecution workExecution = new WorkExecution();
@@ -59,8 +65,5 @@ public class BeanThread {
         };
     }
 
-    @Scheduled(fixedDelay = 60000)
-    public void ping() {
-        WorkTracker.getInstance().checkTracker();
-    }
+
 }

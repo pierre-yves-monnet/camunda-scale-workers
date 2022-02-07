@@ -8,43 +8,44 @@ public class WorkTracker {
     private static final Logger logger = Logger.getLogger(WorkTracker.class.getName());
 
     private static final WorkTracker workTracker = new WorkTracker();
+    public Set<String> inProgressActivity = new HashSet<>();
+    int maxParallel = 0;
+    private long lastTouchTime = 0;
+    private long startActivityTime = 0;
+    private long countNbTouch = 0;
+    private boolean inProgress = false;
+
     public static WorkTracker getInstance() {
         return workTracker;
     }
 
-    private long lastTouchTime =0;
-    private long startActivityTime =0;
-    private long countNbTouch=0;
-
-    public Set<String> inProgressActivity = new HashSet<>();
-    int maxParallel=0;
-
-    private boolean inProgress=false;
     public void startActivity(String signature) {
         synchronized (this) {
             lastTouchTime = System.currentTimeMillis();
             countNbTouch++;
             inProgressActivity.add(signature);
-            if (inProgressActivity.size()>maxParallel) {
-                maxParallel=inProgressActivity.size();
+            if (inProgressActivity.size() > maxParallel) {
+                maxParallel = inProgressActivity.size();
                 logger.info("pick parallele activity " + maxParallel);
 
             }
         }
-        if (! inProgress) {
+        if (!inProgress) {
             // restart the activity
-            inProgress=true;
+            inProgress = true;
             startActivityTime = lastTouchTime;
-            countNbTouch=1;
+            countNbTouch = 1;
         }
     }
+
     public void endActivity(String signature) {
         synchronized (this) {
             inProgressActivity.remove(signature);
         }
     }
+
     public void monitorTracker() {
-        while(true) {
+        while (true) {
             checkTracker();
             try {
                 Thread.sleep(10000);
@@ -53,13 +54,14 @@ public class WorkTracker {
             }
         }
     }
+
     public void checkTracker() {
-        long currentTimeMillis=System.currentTimeMillis();
+        long currentTimeMillis = System.currentTimeMillis();
         if (inProgress && currentTimeMillis - lastTouchTime > 40 * 1000) {
             // activity is done now
-            logger.info("========================= Last Activity. Last run duration is " + (lastTouchTime - startActivityTime) + " ms for " + countNbTouch +" parallele "+maxParallel);
+            logger.info("========================= Last Activity. Last run duration is " + (lastTouchTime - startActivityTime) + " ms for " + countNbTouch + " parallele " + maxParallel);
             inProgress = false;
-            maxParallel=0;
+            maxParallel = 0;
         }
     }
 }
