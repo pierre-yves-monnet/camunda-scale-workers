@@ -10,7 +10,7 @@ With only one worker executing in sequential the treatment, it needs than 200*14
 Note: in all options after, increasing the number of thread after 40 does not improve performances. 
 WorkerExecution has a synchronized() method to track the number of execution in progress and to determine when the work is finished
 
-## option 1 External client:
+## option 1 Multiple Workers objects:
 
 Visit externalclient/External.java
 This solution is a Java program that creates multiple Client Workers.
