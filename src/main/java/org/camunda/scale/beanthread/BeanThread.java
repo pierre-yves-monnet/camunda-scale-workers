@@ -1,20 +1,13 @@
 package org.camunda.scale.beanthread;
 
 import org.camunda.bpm.client.spring.annotation.ExternalTaskSubscription;
-import org.camunda.bpm.client.task.ExternalTask;
 import org.camunda.bpm.client.task.ExternalTaskHandler;
-import org.camunda.bpm.client.task.ExternalTaskService;
-import org.camunda.scale.externalclient.ExternalJava;
 import org.camunda.scale.workexecution.WorkExecution;
-import org.camunda.scale.workexecution.WorkTracker;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.annotation.Scheduled;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.logging.Logger;
@@ -33,14 +26,16 @@ public class BeanThread {
     private final Set<String> inProgressActivivy = new HashSet<>();
 
     /**
-     * How many thread do I want to execute at a time?
+     * How many threads do I want to execute at a time?
      */
     ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(20);
 
 
+    // Attention, the topic "work-to-do" must be handled at a time by only one bean.
+    // So, when you replace the value here, check that all other Bean does not get it.
     @Bean
     @ExternalTaskSubscription(
-            topicName = "work-to-do",
+            topicName = "work-to-do-replaceit",
             lockDuration = 60000)
     public ExternalTaskHandler workToDoHandler() {
         return (externalTask, externalTaskService) -> {
@@ -53,7 +48,7 @@ public class BeanThread {
 
             executor.submit(() -> {
                         WorkExecution workExecution = new WorkExecution();
-                        workExecution.execute(externalTask.getId());
+                        workExecution.execute("BatchThread", externalTask.getId());
                         externalTaskService.complete(externalTask);
                     }
             );

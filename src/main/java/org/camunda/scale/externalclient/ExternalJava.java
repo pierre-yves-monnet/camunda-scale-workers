@@ -24,10 +24,11 @@ public class ExternalJava {
 
         List<ExternalTaskClient> listClients = new ArrayList<>();
         for (int i = 0; i < 20; i++) {
+            String workerId = "client-"+i;
             ExternalTaskClient client =
                     ExternalTaskClient.create()
                             .baseUrl(baseUrl)
-                            .workerId("client-" + i)
+                            .workerId(workerId)
                             .backoffStrategy(backoffStrategy)
                             .maxTasks(1)
                             .build();
@@ -38,7 +39,7 @@ public class ExternalJava {
                             (externalTask, externalTaskService) -> {
 
                                 WorkExecution workExecution = new WorkExecution();
-                                workExecution.execute(externalTask.getId());
+                                workExecution.execute(workerId, externalTask.getId());
 
                                 externalTaskService.complete(externalTask);
 

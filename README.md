@@ -31,9 +31,27 @@ Attention: This method has a limitation. Because any task is immediately taken i
 Using this method implies having a big lock duration or using the next option
 
 # Option 3 BeanThreadApplication Limited
-Visit beanthreadlimitation/BeanThreadLimited
-Same as before, except when the ThreadPool is full, the external client is stopped. The client does not accept any new task
+Visit beanthreadlimitation/BeanThreadLimitedByExecutor
+Same as before, except when the ThreadPool is full, the external client is stopped. The client does not accept any new task.
+To do the stop() and start, a new thread has to be used. External task does not accept that the handle thread does this kind of operation.
+Note: this way to handle the start/stop is very dynamique, and can be used to resize the number of workers differently in the day. 
+
+Visit beanthreadlimitation/BeanThreadLimitedByObject
+In this implementation, the bean created a limited number of ExternalTask Client.
 
 Nota: you have to change the topic to get the work between beanthread/BeanThread and beanthreadlimitation/BeanThreadLimited
  
+# Option 4 Spring Boot multiple workers
+In the spring boot config, describe multiple environment. Each environment starts its own workers.
+Recommendation:
+* Each worker should have a different worker ID
+* Set the max task to 1 
+==> To verify
 
+
+
+Spring Boot Dynamique bean
+Create multiple beans, to have multiple threads
+See:
+https://docs.camunda.org/manual/develop/user-guide/ext-client/spring-boot-starter/#custom-clien
+==> To verify
