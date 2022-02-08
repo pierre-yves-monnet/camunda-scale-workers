@@ -4,6 +4,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Logger;
 
+/** This class analyse the real time work, and detect how many in progress works are in parallel.
+ *
+  */
 public class WorkTracker {
     private static final Logger logger = Logger.getLogger(WorkTracker.class.getName());
 
@@ -26,7 +29,7 @@ public class WorkTracker {
             inProgressActivity.add(signature);
             if (inProgressActivity.size() > maxParallel) {
                 maxParallel = inProgressActivity.size();
-                logger.info("pick parallele activity " + maxParallel);
+                logger.info("pic parallel activity " + maxParallel);
 
             }
         }
@@ -55,6 +58,10 @@ public class WorkTracker {
         }
     }
 
+    /**
+     * CheckTracker : determine if the load is still in progress, or not.
+     * To know that, it must not have any intervention in the last 40 seconds.
+     */
     public void checkTracker() {
         long currentTimeMillis = System.currentTimeMillis();
         if (inProgress && currentTimeMillis - lastTouchTime > 40 * 1000) {

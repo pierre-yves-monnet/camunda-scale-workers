@@ -1,4 +1,4 @@
-package org.camunda.scale.beanthreadLimitation;
+package org.camunda.scale.beanthreadlimitation;
 
 import org.camunda.bpm.client.ExternalTaskClient;
 import org.camunda.scale.workexecution.WorkExecution;
@@ -11,7 +11,16 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.logging.Logger;
 
+/**
+* This worker use a simple thread, one execution at a time.
+* The execution immediately register the work in a executorPool, and return. Execution is then delay.
+* To protect the machine, the executorPool creates maximum 20 threads at a time. So, maximum 20 executions is processed
+ * If the executorPool maximum limit is reach, then the worker is stops. It will not accept any new task.
+ * When the queue is under the limit, it will be restarted, to accept new task.
+ * This avoid the starvation and the "execute multiple time" describe in the beanthread class
 
+ * This implementation use a ThreadPoolExecutor
+        */
 @Component
 public class BeanThreadLimitedByExecutor {
 
@@ -50,7 +59,7 @@ public class BeanThreadLimitedByExecutor {
 
         // Attention, the topic "work-to-do" must be handled at a time by only one bean.
         // So, when you replace the value here, check that all other Bean does not get it.
-        client.subscribe("work-to-do")
+        client.subscribe("work-to-do-limitedbyexecutor")
                 .lockDuration(60000)
                 .handler((externalTask, externalTaskService) -> {
 

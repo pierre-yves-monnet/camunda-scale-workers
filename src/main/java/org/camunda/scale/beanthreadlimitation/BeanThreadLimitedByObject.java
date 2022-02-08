@@ -1,16 +1,19 @@
-package org.camunda.scale.beanthreadLimitation;
+package org.camunda.scale.beanthreadlimitation;
 
 import org.camunda.bpm.client.ExternalTaskClient;
 import org.camunda.scale.workexecution.WorkExecution;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.logging.Logger;
+
+/**
+ * This bean register N external client. Each client is independent
+ *
+ */
 
 @Component
 public class BeanThreadLimitedByObject {

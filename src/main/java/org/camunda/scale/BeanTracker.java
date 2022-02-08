@@ -9,8 +9,6 @@ import org.springframework.stereotype.Component;
 
 @Component
 @EnableScheduling
-
-
 public class BeanTracker {
     @Scheduled(fixedDelay = 60000)
     public void ping() {
